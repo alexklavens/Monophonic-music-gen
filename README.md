@@ -1,4 +1,4 @@
-# Monophonic-music-gen
+# Smart-Melody-Generator
 Learns patterns from a database of music to generate original melodies
 
 # About the project
