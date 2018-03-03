@@ -1,0 +1,49 @@
+%%%%%%%%%%%%%%
+%This Module is the central facilitator of Automatic monophonic music
+%generation
+%
+%It will access and go through a database of songs
+%Each 'song' will return its interval composition and this module will keep
+%track of an 'interval map' from which music will be automatically
+%generated
+%%%%%%%%%%%%%%
+% addpath('DutchSampleFolder')
+
+% database = 'DutchSampleFolder';
+
+fprintf('Welcome! This program will analyze a database of %d Dutch Folk Melodies\n\n');
+
+
+
+
+
+
+database = 'DutchAudioPart1';
+addpath(genpath(database));
+myDataset = makeSongDataset(database);
+intervalMap = zeros(12);
+
+part = 1200*2;
+thisGo = round(length(myDataset)/part);
+for i = 1:thisGo
+%     timeRemaining = getRemainingTime(myDataset(i:end))
+    fprintf('Analyzing song #%d of %d\n',i,thisGo)
+%     fprintf('........Time Remaining: %f minutes\n',timeRemaining/60)
+    intervals = analyze_item(myDataset{i},10);
+    nextMap = makeMap(intervals);
+    intervalMap = intervalMap + nextMap;
+end
+mySq = generate_sequence(intervalMap);
+disp('...generating an interval sequence from aquired interval matrix...')
+myPattern = getRandomPattern(myDataset);
+disp('...generating rythmic pattern...')
+playSequence(mySq,myPattern,3,44100);
+disp('Playing the Sequence')
+fprintf('.....................
+
+
+
+function INTRO()
+    fprintf('Welcome! This program will analyze a database of %d Dutch Folk Melodies\n\n')
+
+end

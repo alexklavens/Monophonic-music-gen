@@ -1,0 +1,118 @@
+
+function intervals = analyze_item(fileName)
+    addpath(genpath('DutchSampleFolder'));
+    disp('file name');
+    disp(fileName)
+    
+    
+    disp('Determining character vector')
+    (ischar(fileName))
+    [sample, fs] = audioread(fileName);
+   
+    sample = sample(1:end/3);
+
+    [pitchTimes, newSounds] = medianFilter(sample,fs);
+    x = PitchTimesToMidiTimes(pitchTimes);
+
+    y = OctaveNormalizeMidi(x);
+    h = makeHistogram(y);
+    key = getKey(h);
+    intervals = getIntervals(newSounds,key);
+
+%     disp('We now have a vector of normalized intervals');
+%     intervalMap = makeMap(intervals);
+% 
+%     mySq = generate_sequence(intervalMap)
+%     playSequence(mySq,key,fs);
+
+
+
+    % soundsc(sample,fs)
+
+
+    % get vector of pitch,start and stop times
+
+    %soundsc(first5,fs)
+
+
+    %goal: have a 3 column vector of pitch, start, stop
+    %create histogram of song (pitch vs time)
+end
+
+function midiTimes = PitchTimesToMidiTimes(pitchTimes)
+    midiTimes = pitchTimes;
+    for i = 1:size(pitchTimes,1)
+        midiTimes(i,1) = NoteToMidi(pitchTimes(i,1));
+    end
+end
+        
+function outVector = OctaveNormalizeMidi(midiVector)
+    outVector = midiVector;
+    for i = 1:length(midiVector)
+        num = midiVector(i,1);
+%         while num >= 12
+%             num = num-12;
+%         end
+        outVector(i,1)=mod(num,12);
+    end
+end
+
+
+function weighted = GiveWeight(midiVector)
+    weighted = zeros(1,12);
+    for i = 1:size(midiVector,1)
+        note = midiVector(i,1)
+        weighted(note+1) = weighted(note+1) + midiVector(i,2);
+    end
+end
+        
+function medianfilter(signal,fs)
+    fft_size = 2^11;
+    noverlap = floor(fft_size/15);
+    [S F T] = spectrogram(signal,hanning(fft_size),noverlap,fft_size,fs);
+    S = abs(S);
+    
+    %get magnitude vector
+    mags = allmags(S);
+    figure(2)
+    plot(mags)
+    
+    
+end
+
+
+
+function h = makeHistogram(noteVector)
+%two column vector with note and time
+%     histoVect = [];
+%     for i = 1:size(noteVector,1)
+%         histoVect(i) = noteVector(i,1)*noteVector(i,2);
+%     end
+    figure(4)
+    %noteVector(:,1);
+    h = histogram(noteVector,[0:12]);
+end
+
+function mags = allMags(S)
+    %returns a vector of magnitudes of x
+    
+    numFrames = size(S,2);
+    mags = zeros(1,numFrames);
+    for i = 1:numFrames
+        
+        mags(i) = magnitude(S,i);
+    end
+        
+        
+    
+end
+
+
+
+function mag = magnitude(S, col)
+   %%takes a spectrogram (a vector)and column number and returns the magnitude
+    %%(sum)
+    
+    
+    mag = sum(S(:,col));    
+end
