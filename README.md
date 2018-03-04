@@ -8,8 +8,6 @@ This was a final project for my Digital Sound Processing course. It analyzes a d
 
 This program is centered around the creation and use of a 12 x 12 matrix representing possible changes of musical intervals. Database analysis populates the matrix, and melody generation makes use of it.
 
-## Creating the matrix
-
 The matrix is updated throughout an analysis of the entire dataset of samples. As each additional sample is analyzed, the matrix becomes better defined as a representaiton of the dataset. In my case, I used this under the assumption that the program is using a dataset of alike samples to create melodies based on patterns found throughout the dataset. The method still holds to create melodies as a blend of whatever might be in the dataset.
 
 ### 1. Gets the notes
